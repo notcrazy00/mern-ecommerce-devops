@@ -25,7 +25,7 @@ connectToDB()
 
 // middlewares
 server.use(cors({
-    origin: ['http://localhost:3000', 'http://127.0.0.1:3000'],
+    origin: ['http://localhost:3000', 'http://127.0.0.1:3000', 'http://mern-ecommerce.local:8080'],
     credentials: true,
     exposedHeaders: ['X-Total-Count'],
     methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],

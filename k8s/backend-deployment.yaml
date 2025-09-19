@@ -1,0 +1,95 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: mern-ecommerce
+  labels:
+    app: backend
+    tier: backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+        tier: backend
+    spec:
+      containers:
+      - name: backend
+        image: filiplozanoski/mern-ecommerce-backend:cors-fix
+        ports:
+        - containerPort: 8000
+          name: backend-port
+        env:
+        - name: NODE_ENV
+          valueFrom:
+            configMapKeyRef:
+              name: mern-app-config
+              key: NODE_ENV
+        - name: PORT
+          valueFrom:
+            configMapKeyRef:
+              name: mern-app-config
+              key: PORT
+        - name: MONGO_URI
+          value: "mongodb://admin:password123@mongodb-service.mern-ecommerce.svc.cluster.local:27017/mern-ecommerce?authSource=admin"
+        - name: MONGODB_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: mern-app-config
+              key: MONGODB_HOST
+        - name: MONGODB_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: mern-app-config
+              key: MONGODB_PORT
+        - name: MONGODB_DATABASE
+          valueFrom:
+            configMapKeyRef:
+              name: mern-app-config
+              key: MONGODB_DATABASE
+        - name: MONGODB_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: mern-app-secrets
+              key: MONGODB_USERNAME
+        - name: MONGODB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mern-app-secrets
+              key: MONGODB_PASSWORD
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: mern-app-secrets
+              key: JWT_SECRET
+        - name: JWT_REFRESH_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: mern-app-secrets
+              key: JWT_REFRESH_SECRET
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+        # livenessProbe:
+        #   httpGet:
+        #     path: /
+        #     port: 5000
+        #   initialDelaySeconds: 30
+        #   timeoutSeconds: 5
+        #   periodSeconds: 10
+        # readinessProbe:
+        #   httpGet:
+        #     path: /
+        #     port: 5000
+        #   initialDelaySeconds: 5
+        #   timeoutSeconds: 1
+        #   periodSeconds: 5
+        imagePullPolicy: Always
