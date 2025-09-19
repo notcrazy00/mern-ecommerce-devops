@@ -38,6 +38,9 @@ jobs:
     
     - name: Build Frontend
       working-directory: ./frontend
+      env:
+        CI: false
+        GENERATE_SOURCEMAP: false
       run: npm run build
 
   docker-build-push:
