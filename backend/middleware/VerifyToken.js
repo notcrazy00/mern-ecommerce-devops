@@ -1,44 +1,21 @@
-require('dotenv').config()
-const jwt = require('jsonwebtoken')
-const { sanitizeUser } = require('../utils/SanitizeUser')
+const jwt = require('jsonwebtoken');
 
-exports.verifyToken = async(req, res, next) => {
-    try {
-        // extract the token from request cookies
-        const { token } = req.cookies
+exports.verifyToken = (req, res, next) => {
+  try {
+    // прво пробај од cookie
+    let token = req.cookies?.token;
 
-        // if token is not there, return 401 response
-        if (!token) {
-            return res.status(401).json({ message: "Token missing, please login again" })
-        }
-
-        // Додајте fallback за SECRET_KEY
-        const secretKey = process.env.SECRET_KEY || 'mern-secret-key-2024';
-
-        // verifies the token 
-        const decodedInfo = jwt.verify(token, secretKey)
-
-        // checks if decoded info contains legit details, then set that info in req.user and calls next
-        if (decodedInfo && decodedInfo._id && decodedInfo.email) {
-            req.user = decodedInfo
-            next()
-        }
-        // if token is invalid then sends the response accordingly
-        else {
-            return res.status(401).json({ message: "Invalid Token, please login again" })
-        }
-        
-    } catch (error) {
-        console.log(error);
-        
-        if (error instanceof jwt.TokenExpiredError) {
-            return res.status(401).json({ message: "Token expired, please login again" });
-        } 
-        else if (error instanceof jwt.JsonWebTokenError) {
-            return res.status(401).json({ message: "Invalid Token, please login again" });
-        } 
-        else {
-            return res.status(500).json({ message: "Internal Server Error" });
-        }
+    // по желба дозволи и Authorization: Bearer ...
+    if (!token && req.headers.authorization?.startsWith('Bearer ')) {
+      token = req.headers.authorization.split(' ')[1];
     }
-}
+
+    if (!token) return res.status(401).json({ message: 'No token' });
+
+    const payload = jwt.verify(token, process.env.SECRET_KEY || process.env.JWT_SECRET || 'devsecret');
+    req.user = payload;
+    return next();
+  } catch (err) {
+    return res.status(401).json({ message: 'Invalid token' });
+  }
+};

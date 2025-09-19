@@ -6,28 +6,34 @@ metadata:
   labels:
     app: mern-ecommerce
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
     nginx.ingress.kubernetes.io/cors-allow-origin: "*"
     nginx.ingress.kubernetes.io/cors-allow-methods: "GET, POST, PUT, DELETE, OPTIONS"
     nginx.ingress.kubernetes.io/cors-allow-headers: "DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization"
 spec:
-  ingressClassName: nginx
   rules:
-  - host: mern-ecommerce.local
-    http:
-      paths:
-      - path: /api(/|$)(.*)
-        pathType: Prefix
-        backend:
-          service:
-            name: backend-service
-            port:
-              number: 8000
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: frontend-service
-            port:
-              number: 80
+    - host: mern-ecommerce.local
+      http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: backend-service
+                port:
+                  number: 8000
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend-service
+                port:
+                  number: 80
+          - path: /auth
+            pathType: Prefix
+            backend:
+              service:
+                name: backend-service
+                port:
+                  number: 8000
