@@ -1,3 +1,11 @@
 import axios from 'axios'
 
-export const axiosi=axios.create({withCredentials:true,baseURL:process.env.REACT_APP_BASE_URL})
+// Хардкодиран базен URL за тестирање
+const baseURL = 'http://localhost:8000';
+
+console.log('Using API base URL:', baseURL);
+
+export const axiosi = axios.create({
+    withCredentials: true, 
+    baseURL: baseURL
+})

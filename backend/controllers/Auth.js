@@ -31,11 +31,11 @@ exports.signup=async(req,res)=>{
         const token=generateToken(secureInfo)
 
         // sending jwt token in the response cookies
-        res.cookie('token',token,{
-            sameSite:process.env.PRODUCTION==='true'?"None":'Lax',
-            maxAge:new Date(Date.now() + (parseInt(process.env.COOKIE_EXPIRATION_DAYS * 24 * 60 * 60 * 1000))),
-            httpOnly:true,
-            secure:process.env.PRODUCTION==='true'?true:false
+        res.cookie('token', token, {
+            sameSite: process.env.PRODUCTION === 'true' ? "None" : 'Lax',
+            maxAge: parseInt(process.env.COOKIE_EXPIRATION_DAYS || '30') * 24 * 60 * 60 * 1000, // Број на милисекунди
+            httpOnly: true,
+            secure: process.env.PRODUCTION === 'true' ? true : false
         })
 
         res.status(201).json(sanitizeUser(createdUser))
@@ -48,36 +48,58 @@ exports.signup=async(req,res)=>{
 
 exports.login=async(req,res)=>{
     try {
+        console.log('=== LOGIN ATTEMPT DEBUG ===');
+        console.log('Email:', req.body.email);
+        console.log('Password provided:', !!req.body.password);
+        console.log('Environment vars:');
+        console.log('SECRET_KEY:', process.env.SECRET_KEY ? 'EXISTS' : 'UNDEFINED');
+        console.log('COOKIE_EXPIRATION_DAYS:', process.env.COOKIE_EXPIRATION_DAYS);
+        
         // checking if user exists or not
         const existingUser=await User.findOne({email:req.body.email})
+        console.log('User found in DB:', !!existingUser);
+
+        if (existingUser) {
+            console.log('User email:', existingUser.email);
+            console.log('Password hash exists:', !!existingUser.password);
+            console.log('Password hash starts with $2b$:', existingUser.password.startsWith('$2b$'));
+            
+            const passwordMatch = await bcrypt.compare(req.body.password, existingUser.password);
+            console.log('Password comparison result:', passwordMatch);
+        }
 
         // if exists and password matches the hash
         if(existingUser && (await bcrypt.compare(req.body.password,existingUser.password))){
+            console.log('Login validation passed, generating token...');
 
             // getting secure user info
             const secureInfo=sanitizeUser(existingUser)
+            console.log('Secure info generated:', !!secureInfo);
 
             // generating jwt token
             const token=generateToken(secureInfo)
+            console.log('Token generated successfully:', !!token);
 
             // sending jwt token in the response cookies
-            res.cookie('token',token,{
-                sameSite:process.env.PRODUCTION==='true'?"None":'Lax',
-                maxAge:new Date(Date.now() + (parseInt(process.env.COOKIE_EXPIRATION_DAYS * 24 * 60 * 60 * 1000))),
-                httpOnly:true,
-                secure:process.env.PRODUCTION==='true'?true:false
+            res.cookie('token', token, {
+                sameSite: process.env.PRODUCTION === 'true' ? "None" : 'Lax',
+                maxAge: parseInt(process.env.COOKIE_EXPIRATION_DAYS || '30') * 24 * 60 * 60 * 1000, // Број на милисекунди
+                httpOnly: true,
+                secure: process.env.PRODUCTION === 'true' ? true : false
             })
             return res.status(200).json(sanitizeUser(existingUser))
         }
 
+        console.log('Login failed - invalid credentials');
         res.clearCookie('token');
         return res.status(404).json({message:"Invalid Credentails"})
     } catch (error) {
-        console.log(error);
+        console.log('=== LOGIN ERROR ===');
+        console.log('Error details:', error.message);
+        console.log('Error stack:', error.stack);
         res.status(500).json({message:'Some error occured while logging in, please try again later'})
     }
 }
-
 exports.verifyOtp=async(req,res)=>{
     try {
         // checks if user id is existing in the user collection

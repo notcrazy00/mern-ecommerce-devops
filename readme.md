@@ -1,178 +1,123 @@
-## MERN Ecommerce: A Seamless Shopping Experience Powered by the MERN Stack, Redux Toolkit, and Material UI
+# MERN E-commerce DevOps Project
 
-### Also try -> [https://mernchat.in](https://mernchat.in)
-### ```Note✨: I have another amazing project on``` [end-to-end-encrypted-chat-application](https://github.com/RishiBakshii/mern-chat) ```using Next.js, Prisma, Postgresql, Express, Socket.io.```
+A fully dockerized MERN stack e-commerce application with complete DevOps pipeline implementation.
 
-**MERN Ecommerce** is a full-stack application designed to transform your online shopping experience. Built with the MERN stack (MongoDB, Express.js, React, Node.js), it leverages Redux Toolkit for efficient state management and Material UI for a sleek, user-friendly interface. This project offers a robust platform for both users and admins, packed with essential features for a seamless experience.
+## Technologies Used
 
-![ecommerce-homepage](https://github.com/RishiBakshii/mern-ecommerce/blob/main/frontend/src/assets/images/front.png?raw=true)
-<!-- ![ecommerce-banner](https://github.com/RishiBakshii/mern-ecommerce/blob/main/frontend/src/assets/images/banner4.jpg?raw=true) -->
-![ecommerce-banner](https://github.com/RishiBakshii/mern-ecommerce/blob/main/frontend/src/assets/images/banner3.jpg?raw=true)
+- **Frontend**: React.js, Material UI, Redux Toolkit
+- **Backend**: Node.js, Express.js
+- **Database**: MongoDB
+- **Containerization**: Docker, Docker Compose
+- **CI/CD**: GitHub Actions
+- **Orchestration**: Kubernetes
 
+## Project Structure
 
-# **Features**
+```
+mern-ecommerce/
+├── frontend/           # React application
+├── backend/            # Node.js API server
+├── docker-compose.yml  # Container orchestration
+└── README.md
+```
 
-### **User:**
-- **Product Reviews:**
-  - Write, edit, and delete reviews.
-  - Instant updates on ratings and star percentages.
-  
-- **Wishlist:**
-  - Add, remove, and annotate products with personalized notes.
-  
-- **Order Management:**
-  - Create new orders and view order history.
-  
-- **Profile Management:**
-  - Manage email, username, and multiple addresses.
-  
-- **Shopping Cart:**
-  - Add products, adjust quantities, and view subtotals.
+## Features
 
-### **Admin:**
-- **Product Management:**
-  - Add, edit, delete, and soft-delete products.
-  - Manage product attributes like name and stock.
-  
-- **Order Management:**
-  - View and update order details and status.
+- User authentication (Login/Signup)
+- Product catalog with categories
+- Shopping cart functionality
+- Order management
+- Admin dashboard
+- User reviews and ratings
 
-### **Security & User Experience:**
-- **Secure Authentication:**
-  - Login, signup, OTP verification, password reset, and logout.
-
-- **Intuitive Interface:**
-  - Powered by Material UI for a visually appealing and user-friendly experience.
-
-### **Scalability:**
-- **Built for Growth:**
-  - Scalable architecture to handle increasing user demands.
-
-
-# **Project Setup**
+## Quick Start with Docker
 
 ### Prerequisites
-- Node.js ( version v21.1.0 or later )
-- MongoDB installed and running locally
+- Docker and Docker Compose installed
+- Git
 
-### Clone the project
+### Running the Application
 
+1. Clone the repository:
 ```bash
-  git clone https://github.com/RishiBakshii/mern-ecommerce.git
+git clone https://github.com/YOUR_USERNAME/mern-ecommerce-devops.git
+cd mern-ecommerce-devops
 ```
 
-### Navigate to the project directory
-
+2. Start all services:
 ```bash
-  cd mern-ecommerce
+docker-compose up -d
 ```
 
-### Install dependencies for frontend and backend separately
-**Tip:** To efficiently install dependencies for both frontend and backend simultaneously, use split terminals.
-
-Install frontend dependencies
+3. Seed the database:
 ```bash
-cd frontend
-npm install
+docker-compose exec backend npm run seed
 ```
 
-Install backend dependencies
-
-```bash
-cd backend
-npm install
-```
-
-
-### Environment Variables
-**Backend**
-- Create a `.env` file in the `backend` directory.
-- Add the following variables with appropriate values
-```bash
-# Database connection string
-MONGO_URI="mongodb://localhost:27017/your-database-name"
-
-# Frontend URL (adjust if needed)
-ORIGIN="http://localhost:3000"
-
-# Email credentials for sending password resets and OTPs
-EMAIL="your-email@example.com"
-PASSWORD="your-email-password"
-
-# Token and cookie expiration settings
-LOGIN_TOKEN_EXPIRATION="30d"  # Days
-OTP_EXPIRATION_TIME="120000"  # Milliseconds
-PASSWORD_RESET_TOKEN_EXPIRATION="2m"  # Minutes
-COOKIE_EXPIRATION_DAYS="30"    # Days
-
-# Secret key for jwt security
-SECRET_KEY="your-secret-key"
-
-# Environment (production/development)
-PRODUCTION="false" # Initially set to false for development
-```
-
-**Frontend**
-- Create a `.env` file in the `frontend` directory
-- Add the following variable:
-```bash
-# Backend URL (adjust if needed)
-REACT_APP_BASE_URL="http://localhost:8000" 
-```
-
-**Important**
-- Replace all placeholders (e.g., your_database_name, your_email) with your actual values.
-- Exclude the `.env` file from version control to protect sensitive information.
-
-### Data seeding
-- **Get started quickly with pre-populated data**: Populate your database with sample users, products, reviews, and carts, enabling you to test functionalities without manual data entry.
-
-**Steps**:
-- Open a new terminal window.
-- Navigate to the `backend` directory: `cd backend`
-- Run the seeding script: `npm run seed` ( This script executes the `seed.js` file within the `seed` subdirectory equivalent to running `node seed/seed.js` )
-### Running Development Servers
-
-**Important:**
-
-- **Separate terminals**: Run the commands in separate terminal windows or use `split terminal` to avoid conflicts.
-- **Nodemon required**: Ensure you have `nodemon` installed globally to run the backend development servers using `npm run dev`. You can install it globally using `npm install -g nodemon`.
-
-#### Start the backend server
-- Navigate to the `backend` directory: `cd backend`
-- Start the server: `npm run dev` (or npm start)
-- You should see a message indicating the server is running, usually on port 8000.
-     
-#### Start the frontend server:
-- Navigate to the `frontend` directory: `cd frontend`
-- Start the server: `npm start`
-- You should see a message indicating the server is running, usually on port 3000.
-
-### Login with demo account (Optional)
-- After successfully seeding the database, you can now explore the application's functionalities using pre-populated sample data.
-- here are the `login credentials`
-```bash
-  email: demo@gmail.com
-  pass: helloWorld@123
-```
-
-- **Please Note**: While the demo account provides a convenient way to explore many features, it has some limitations:
-    - **Password Reset and OTP Verification**: Due to security reasons, the demo account uses a non-real email address. Therefore, password reset and OTP verification functionalities are not available for this account.
-
-    **What this means**:
-    - You cannot request a password reset or receive verification codes on the demo email address.
-    - To test password reset and OTP verification flows, you need to create a genuine account with a valid email address.
-
-    **What to do?**
-    - If you're primarily interested in exploring other functionalities like wishlist, cart, and order history, the demo account is sufficient.
-    - To test password reset and OTP verification, create a personal account with a valid email address.
-### Accessing the Application
-Once both servers are running, you can access them at the following URL's:
-- Backend: http://localhost:8000
+4. Access the application:
 - Frontend: http://localhost:3000
+- Backend API: http://localhost:8000
+- MongoDB: localhost:27018
 
-## **Bonus**
-Don't forget to star the repository and share your feedback!✨
+### Demo Credentials
+- Email: demo@gmail.com
+- Password: helloWorld@123
 
-## Authors
-- [@RishiBakshii](https://github.com/RishiBakshii)
+## Services
+
+### Frontend
+- **Port**: 3000
+- **Technology**: React.js with Nginx
+- **Features**: Responsive UI, Material Design
+
+### Backend
+- **Port**: 8000
+- **Technology**: Node.js/Express
+- **Features**: RESTful API, JWT Authentication
+
+### Database
+- **Port**: 27018 (external)
+- **Technology**: MongoDB
+- **Features**: Persistent data storage
+
+## Development
+
+### Local Development
+1. Install dependencies for both frontend and backend:
+```bash
+cd frontend && npm install
+cd ../backend && npm install
+```
+
+2. Set up environment variables:
+- Create `.env` files in both frontend and backend directories
+- Copy from `.env.example` and configure
+
+3. Start services locally:
+```bash
+# Backend
+cd backend && npm run dev
+
+# Frontend
+cd frontend && npm start
+```
+
+## DevOps Implementation
+
+- [x] Docker containerization
+- [x] Docker Compose orchestration
+- [ ] CI/CD with GitHub Actions
+- [ ] Kubernetes deployment
+- [ ] Helm charts
+- [ ] Monitoring and logging
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Submit a pull request
+
+## License
+
+This project is licensed under the MIT License.
