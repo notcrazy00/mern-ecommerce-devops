@@ -3,9 +3,9 @@ kind: Ingress
 metadata:
   name: mern-app-ingress
   namespace: mern-ecommerce
+  labels:
+    app: mern-ecommerce
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /$2
-    nginx.ingress.kubernetes.io/use-regex: "true"
     nginx.ingress.kubernetes.io/proxy-connect-timeout: "60"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "60"
     nginx.ingress.kubernetes.io/proxy-read-timeout: "60"
@@ -15,19 +15,19 @@ spec:
   - host: mern-ecommerce.local
     http:
       paths:
-      # Backend API рути
-      - path: /api(/|$)(.*)
-        pathType: ImplementationSpecific
+      # Backend API рути - без rewrite
+      - path: /api
+        pathType: Prefix
         backend:
           service:
             name: backend-service
             port:
-              number: 5000
-      # Frontend рути (сите останати)
-      - path: /(.*)
-        pathType: ImplementationSpecific
+              number: 8000
+      # Frontend рути
+      - path: /
+        pathType: Prefix
         backend:
           service:
             name: frontend-service
             port:
-              number: 3000
+              number: 80

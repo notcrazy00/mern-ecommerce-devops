@@ -3,10 +3,9 @@ const Review=require("../models/Review")
 exports.create=async(req,res)=>{
     try {
         console.log(req.body);
-        const created = new Review(req.body)
+        const created=await new Review(req.body).populate({path:'user',select:"-password"})
         await created.save()
-        const populatedReview = await Review.findById(created._id).populate({path:'user',select:"-password"})
-        res.status(201).json(populatedReview)
+        res.status(201).json(created)
     } catch (error) {
         console.log(error);
         return res.status(500).json({message:'Error posting review, please trying again later'})
@@ -18,31 +17,21 @@ exports.getByProductId=async(req,res)=>{
         const {id}=req.params
         let skip=0
         let limit=0
+
         if(req.query.page && req.query.limit){
             const pageSize=req.query.limit
             const page=req.query.page
+
             skip=pageSize*(page-1)
             limit=pageSize
         }
-        
-        // Филтрирај ги само reviews со валидни user референци
-        const filter = {
-            product: id,
-            user: { $ne: null, $exists: true }
-        }
-        
-        const totalDocs=await Review.find(filter).countDocuments().exec()
-        const result=await Review.find(filter)
-            .skip(skip)
-            .limit(limit)
-            .populate('user')
-            .exec()
-        
-        // Дополнителна проверка за null users
-        const cleanedResult = result.filter(review => review.user != null)
-        
-        res.set("X-total-Count", cleanedResult.length)
-        res.status(200).json(cleanedResult)
+
+        const totalDocs=await Review.find({product:id}).countDocuments().exec()
+        const result=await Review.find({product:id}).skip(skip).limit(limit).populate('user').exec()
+
+        res.set("X-total-Count",totalDocs)
+        res.status(200).json(result)
+
     } catch (error) {
         console.log(error);
         res.status(500).json({message:'Error getting reviews for this product, please try again later'})
@@ -53,9 +42,6 @@ exports.updateById=async(req,res)=>{
     try {
         const {id}=req.params
         const updated=await Review.findByIdAndUpdate(id,req.body,{new:true}).populate('user')
-        if (!updated || !updated.user) {
-            return res.status(404).json({message: 'Review not found or invalid user'})
-        }
         res.status(200).json(updated)
     } catch (error) {
         console.log(error);
