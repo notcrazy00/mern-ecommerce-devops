@@ -30,11 +30,11 @@ jobs:
     
     - name: Install Frontend Dependencies
       working-directory: ./frontend
-      run: npm ci --only=production
+      run: npm ci --legacy-peer-deps --omit=dev
     
     - name: Install Backend Dependencies  
       working-directory: ./backend
-      run: npm ci --only=production
+      run: npm ci --omit=dev
     
     - name: Build Frontend
       working-directory: ./frontend
