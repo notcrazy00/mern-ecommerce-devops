@@ -55,4 +55,4 @@ spec:
           initialDelaySeconds: 5
           timeoutSeconds: 1
           periodSeconds: 5
-        imagePullPolicy: Never
+        imagePullPolicy: Always
